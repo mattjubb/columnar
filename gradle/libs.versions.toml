@@ -1,0 +1,27 @@
+[versions]
+java = "25"
+byteBuddy = "1.15.10"
+fastutil = "8.5.15"
+jctools = "4.0.5"
+junit = "5.11.3"
+assertj = "3.26.3"
+jqwik = "1.9.1"
+jmh = "1.37"
+slf4j = "2.0.16"
+vertx = "5.0.12"
+
+[libraries]
+byteBuddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+jctools = { module = "org.jctools:jctools-core", version.ref = "jctools" }
+slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+vertxWeb = { module = "io.vertx:vertx-web", version.ref = "vertx" }
+
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+jqwik = { module = "net.jqwik:jqwik", version.ref = "jqwik" }
+
+jmhCore = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh" }
+jmhAnnotations = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh" }

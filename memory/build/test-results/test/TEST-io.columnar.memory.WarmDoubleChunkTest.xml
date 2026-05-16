@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.columnar.memory.WarmDoubleChunkTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:04:51.647Z" hostname="Mac.localdomain" time="0.009">
+  <properties/>
+  <testcase name="warmLayoutPromotesBackToHot()" classname="io.columnar.memory.WarmDoubleChunkTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

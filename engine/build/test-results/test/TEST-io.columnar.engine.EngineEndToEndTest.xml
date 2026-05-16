@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.columnar.engine.EngineEndToEndTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.590Z" hostname="Mac.localdomain" time="0.069">
+  <properties/>
+  <testcase name="viewportLimitTrimsResults()" classname="io.columnar.engine.EngineEndToEndTest" time="0.054"/>
+  <testcase name="cachedReadReturnsSameInstanceWhenUpstreamUnchanged()" classname="io.columnar.engine.EngineEndToEndTest" time="0.002"/>
+  <testcase name="filterOverSealedTable()" classname="io.columnar.engine.EngineEndToEndTest" time="0.001"/>
+  <testcase name="filterOverOpenTableInvalidatesOnAppend()" classname="io.columnar.engine.EngineEndToEndTest" time="0.004"/>
+  <testcase name="filterThenProjectComposes()" classname="io.columnar.engine.EngineEndToEndTest" time="0.002"/>
+  <testcase name="projectPushesColumnSelectionUpstream()" classname="io.columnar.engine.EngineEndToEndTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

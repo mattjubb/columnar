@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>columnar — AG Grid infinite (viewport blocks)</title>
+  <link href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.7/styles/ag-grid.css"
+        rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.7/styles/ag-theme-alpine.css"
+        rel="stylesheet"/>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #toolbar { padding: 8px 12px; background: #1e1e1e; color: #ddd; font-size: 13px;
+      display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+    label#bookAggLbl { cursor: pointer; user-select: none; display: inline-flex; gap: 8px;
+      align-items: center;}
+    #grid { height: calc(100vh - 48px); width: 100vw; }
+    /* Right-align DV01 $ columns next to tenor headers */
+    .ag-right-aligned-cell { justify-content: flex-end !important; }
+    .ag-right-aligned-header .ag-header-cell-label { justify-content: flex-end !important; width: 100%; }
+  </style>
+</head>
+<body>
+<div id="toolbar">
+  <label id="bookAggLbl">
+    <input type="checkbox" id="aggregateByBook"/> Server rollup by book (10 rows · sums DV01; trade id omitted)
+  </label>
+  <span id="status">Loading grid…</span>
+</div>
+<div id="grid" class="ag-theme-alpine-dark"></div>
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.7/dist/ag-grid-community.min.js"></script>
+<script>
+(async function () {
+  const gridEl = document.getElementById('grid');
+  const status = document.getElementById('status');
+
+  /** Bumped every SSE invalidate so /api/rows URLs stay unique — avoids HTTP disk cache stalls. */
+  let dataRevision = 0;
+  /** Bumped whenever the datasource shape changes independently of table version (e.g. trade↔book). */
+  let rowFetchNonce = 0;
+
+  let logicalLastExclusive;
+  /** Current {@code GET /api/meta} payload ({@code columnDefs}, {@code lastRow}). */
+  let meta;
+
+  /**
+   * {@code trades}: one row per trade + book descriptor + unstored DV01s.
+   * {@code book}: server-side summed DV01s for each of ten books (trade id intentionally absent).
+   */
+  let viewMode = 'trades';
+
+  /** @param {'trades' | 'book'} kind */
+  async function refreshMeta(kind) {
+    const url = kind === 'book' ? '/api/meta?groupBy=book' : '/api/meta';
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-store', 'Pragma': 'no-cache' },
+    });
+    if (!res.ok) {
+      throw new Error(url + ' -> HTTP ' + res.status);
+    }
+    meta = await res.json();
+    logicalLastExclusive = meta.lastRow;
+    return meta;
+  }
+
+  /** Compact $ display for DV01s ($10.2K, + $1.5M; small amounts show full dollars). */
+  function formatCompactUsdThousands(value) {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    const n = Number(value);
+    if (Number.isNaN(n)) {
+      return '';
+    }
+    const sign = n < 0 ? '-' : '';
+    const abs = Math.abs(n);
+
+    if (abs >= 1_000_000) {
+      const m = abs / 1_000_000;
+      const s =
+          m >= 100 ? String(Math.round(m)) : m.toFixed(1).replace(/\.0$/, '');
+      return sign + '$' + s + 'M';
+    }
+    if (abs >= 1000) {
+      const k = abs / 1000;
+      const s =
+          k >= 100 ? String(Math.round(k)) : k.toFixed(1).replace(/\.0$/, '');
+      return sign + '$' + s + 'K';
+    }
+    if (abs === Math.round(abs)) {
+      return sign + '$' + Math.round(abs).toLocaleString();
+    }
+    return (
+        sign +
+        '$' +
+        abs.toLocaleString(undefined, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }));
+  }
+
+  function augmentDv01Column(col, noFilterThree) {
+    const base =
+        Object.assign({}, col, noFilterThree);
+
+    /*
+     * Trade id row — sized for legibility; server book rollup uses stable BOOK_0 … labels.
+     */
+    if (base.field === 'trades' || base.field === 'book') {
+      return Object.assign({}, base, {
+        minWidth: base.field === 'trades' ? 108 : 92,
+      });
+    }
+
+    /*
+     * Server marks DOUBLE tenor buckets as cellDataType "number"; string cols without it stay narrow.
+     */
+    if (!base.field || base.cellDataType !== 'number') {
+      return Object.assign({}, base, { minWidth: 72 });
+    }
+
+    return Object.assign({}, base, {
+      minWidth: 64,
+      headerClass: 'ag-right-aligned-header',
+      cellClass: 'ag-right-aligned-cell',
+      valueFormatter(params) {
+        return formatCompactUsdThousands(params.value);
+      },
+      cellStyle(params) {
+        const v = params.value;
+        if (typeof v !== 'number' || Number.isNaN(v)) {
+          return { fontVariantNumeric: 'tabular-nums' };
+        }
+        if (v < 0) {
+          return { color: '#f87171', fontVariantNumeric: 'tabular-nums' };
+        }
+        if (v > 0) {
+          return { color: '#4ade80', fontVariantNumeric: 'tabular-nums' };
+        }
+        return { color: '#a8a29e', fontVariantNumeric: 'tabular-nums' };
+      },
+    });
+  }
+
+  const suppressFilterInfinite = {
+    sortable: false,
+    filter: false,
+    floatingFilter: false,
+  };
+
+  function columnDefsFromMeta() {
+    return meta.columnDefs.map((col) => augmentDv01Column(col, suppressFilterInfinite));
+  }
+
+  try {
+    await refreshMeta('trades');
+  } catch (e) {
+    status.textContent = '/api/meta failed: ' + e;
+    return;
+  }
+
+  /** Use full grid width; horizontal scroll appears only when min widths exceed the viewport. */
+  function fitColumnsToViewportWidth(api, why) {
+    if (!api || typeof api.sizeColumnsToFit !== 'function') {
+      return;
+    }
+    try {
+      api.sizeColumnsToFit();
+    } catch (e) {
+      console.warn('[columnar viz] sizeColumnsToFit failed', why, e);
+    }
+  }
+  function rowIdChooser(params) {
+    const d = params.data;
+    if (!d) {
+      return undefined;
+    }
+    if (viewMode === 'book' && d.book != null) {
+      return String(d.book);
+    }
+    if (viewMode !== 'book' && d.trades != null) {
+      return String(d.trades);
+    }
+    return undefined;
+  }
+
+  /**
+   * Community infinite datasource: asks the server only for scrolled row spans.
+   * Enterprise SSRM row grouping is not bundled — groupBy=book switches which schema the servlet serves.
+   */
+  function createDatasource() {
+    return {
+      getRows(params) {
+        const startRow = params.startRow;
+        const endRow = params.endRow;
+        const gb = viewMode === 'book' ? '&groupBy=book' : '';
+        const qs =
+            'startRow=' + encodeURIComponent(startRow)
+            + '&endRow=' + encodeURIComponent(endRow)
+            + '&rev=' + encodeURIComponent(dataRevision)
+            + '&nq=' + encodeURIComponent(rowFetchNonce)
+            + gb;
+        fetch('/api/rows?' + qs, {
+          cache: 'no-store',
+          headers: {
+            /* belt + suspenders; server also sends no-store headers */
+            'Cache-Control': 'no-store',
+            'Pragma': 'no-cache'
+          },
+        })
+            .then((r) => {
+              if (!r.ok) {
+                params.failCallback();
+                return null;
+              }
+              return r.json();
+            })
+            .then((d) => {
+              if (!d) return;
+              params.successCallback(d.rows, d.lastRow);
+              const modeLbl = viewMode === 'book' ? 'rollup·book ' : '';
+              status.textContent =
+                  'Infinite · ' + modeLbl + 'logical rows '
+                  + logicalLastExclusive
+                  + ' · block [' + startRow + ', ' + endRow
+                  + ') · dataRevision ' + dataRevision + ' · payload v ' + d.version;
+            })
+            .catch(() => params.failCallback());
+      },
+    };
+  }
+
+  let viewportResizeTimer = 0;
+
+  let gridApi;
+
+  function reloadInfiniteBlocks(api, hint) {
+    if (!api) {
+      console.warn('[columnar viz] reloadInfiniteBlocks: grid api missing', hint);
+      return;
+    }
+
+    let anchorIdx = NaN;
+    if (typeof api.getFirstDisplayedRowIndex === 'function') {
+      const v = api.getFirstDisplayedRowIndex();
+      if (Number.isFinite(v) && v >= 0) {
+        anchorIdx = v;
+      }
+    }
+
+    const vp =
+        typeof gridEl.querySelector === 'function'
+            ? gridEl.querySelector('.ag-body-vertical-scroll-viewport')
+                || gridEl.querySelector('.ag-body-viewport')
+            : null;
+    let scrollPx = NaN;
+    if (vp && typeof vp.scrollTop === 'number') {
+      scrollPx = vp.scrollTop;
+    }
+
+    /*
+     * Purge/refresh reloads viewport blocks — setGridOption('datasource', …) on every tick tends
+     * to reset vertical scroll too, so rely on purgeInfiniteCache alone when available.
+     */
+    let refreshed = false;
+    try {
+      if (typeof api.purgeInfiniteCache === 'function') {
+        api.purgeInfiniteCache();
+        refreshed = true;
+      } else if (typeof api.refreshInfiniteCache === 'function') {
+        api.refreshInfiniteCache();
+        refreshed = true;
+      } else if (typeof api.setGridOption === 'function') {
+        api.setGridOption('datasource', createDatasource());
+        refreshed = true;
+      }
+    } catch (e) {
+      console.warn('[columnar viz] infinite cache reload threw', hint, e);
+    }
+    if (!refreshed) {
+      console.warn('[columnar viz] could not purge/refresh infinite cache (' + hint + ')');
+    }
+
+    /** Blocks refetch async; retries keep the user near the prior row / pixel scroll. */
+    function restoreViewport() {
+      try {
+        if (typeof api.ensureIndexVisible === 'function'
+            && Number.isFinite(anchorIdx)
+            && anchorIdx >= 0) {
+          api.ensureIndexVisible(anchorIdx, 'top');
+        }
+        const v2 =
+            typeof gridEl.querySelector === 'function'
+                ? gridEl.querySelector('.ag-body-vertical-scroll-viewport')
+                    || gridEl.querySelector('.ag-body-viewport')
+                : null;
+        if (v2 && Number.isFinite(scrollPx) && scrollPx >= 0) {
+          v2.scrollTop = scrollPx;
+        }
+      } catch (_) {
+        /* ignore */
+      }
+    }
+
+    restoreViewport();
+    queueMicrotask(restoreViewport);
+    window.requestAnimationFrame(restoreViewport);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(restoreViewport));
+    window.setTimeout(restoreViewport, 24);
+    window.setTimeout(restoreViewport, 80);
+    window.setTimeout(restoreViewport, 200);
+    window.setTimeout(restoreViewport, 500);
+    window.setTimeout(() => fitColumnsToViewportWidth(api, 'after-infinite-block-refresh'), 520);
+    window.setTimeout(() => fitColumnsToViewportWidth(api, 'after-infinite-block-refresh2'), 900);
+  }
+
+  gridApi = agGrid.createGrid(gridEl, {
+    columnDefs: columnDefsFromMeta(),
+    rowModelType: 'infinite',
+    datasource: createDatasource(),
+    cacheBlockSize: 200,
+    maxBlocksInCache: 20,
+    animateRows: false,
+    suppressColumnVirtualisation: true,
+    suppressScrollOnNewData: true,
+    getRowId: rowIdChooser,
+    defaultColDef: {
+      sortable: false,
+      filter: false,
+      resizable: true,
+      floatingFilter: false,
+      minWidth: 56,
+      suppressHeaderMenuButton: true,
+      suppressHeaderContextMenu: true,
+      wrapHeaderText: true,
+      autoHeaderHeight: true,
+    },
+    onGridReady(e) {
+      fitColumnsToViewportWidth(e.api, 'grid-ready');
+    },
+    onFirstDataRendered(e) {
+      fitColumnsToViewportWidth(e.api, 'first-data');
+    },
+  });
+
+  /** Switch between per-trade DV01 slices and ten server-summarized book rows. */
+  async function toggleBookAggRollup(enabled) {
+    await refreshMeta(enabled ? 'book' : 'trades');
+    viewMode = enabled ? 'book' : 'trades';
+    rowFetchNonce++;
+    gridApi.setGridOption('columnDefs', columnDefsFromMeta());
+    gridApi.setGridOption('getRowId', rowIdChooser);
+    gridApi.setGridOption('datasource', createDatasource());
+    reloadInfiniteBlocks(gridApi, 'book-toggle/' + viewMode);
+    fitColumnsToViewportWidth(gridApi, 'after-book-toggle');
+  }
+
+  const aggregateByBookEl = document.getElementById('aggregateByBook');
+  if (aggregateByBookEl) {
+    aggregateByBookEl.addEventListener('change', (ev) => {
+      toggleBookAggRollup(ev.target.checked).catch((err) => {
+        console.error(err);
+        status.textContent = 'Failed switching view: ' + err;
+        ev.target.checked = !ev.target.checked;
+      });
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    window.clearTimeout(viewportResizeTimer);
+    viewportResizeTimer = window.setTimeout(
+        () => fitColumnsToViewportWidth(gridApi, 'window-resize'),
+        120);
+  });
+
+  function applyServerRevision(hint, nextRev) {
+    if (!Number.isFinite(nextRev)) {
+      console.warn('[columnar viz] bad revision from', hint, nextRev);
+      return;
+    }
+    if (nextRev <= dataRevision) {
+      return;
+    }
+    dataRevision = nextRev;
+    const via = '[v' + dataRevision + '] ' + hint;
+    window.setTimeout(() => reloadInfiniteBlocks(gridApi, via), 0);
+    status.textContent =
+        'Refreshing grid · logical rows ' + logicalLastExclusive
+        + ' · revision ' + dataRevision + ' · ' + hint;
+  }
+
+  async function pollTableVersion(label) {
+    try {
+      const r = await fetch('/api/version', {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-store', 'Pragma': 'no-cache' },
+      });
+      if (!r.ok) {
+        return;
+      }
+      const body = await r.json();
+      if (typeof body.version !== 'number' && typeof body.version !== 'string') {
+        return;
+      }
+      applyServerRevision('poll/' + label, Number(body.version));
+    } catch (_) {
+      /* ignore transient network failures */
+    }
+  }
+
+  const src = new EventSource('/stream');
+
+  /** Connect invalidation listener before first paint so we miss fewer early ticks (best-effort). */
+  src.onopen = () => {
+    status.textContent +=
+        ' · SSE invalidate + poll 1.5s · pinned ag-grid-community@32.3.7';
+  };
+  src.onerror = () => {
+    status.textContent += ' · SSE error / reconnecting…';
+  };
+
+  function handleInvalidateSSE(ev, channelLabel) {
+    let p;
+    try {
+      p = JSON.parse(ev.data);
+    } catch (e) {
+      return;
+    }
+    if (p.kind !== 'invalidate') {
+      return;
+    }
+    if (typeof p.version === 'number' || typeof p.version === 'string') {
+      applyServerRevision(channelLabel + '/sse', Number(p.version));
+    } else {
+      applyServerRevision(channelLabel + '/sse(+1)', dataRevision + 1);
+    }
+  }
+
+  /*
+   * Server may emit either unnamed events (fires onmessage) or `event: invalidate`
+   * (fires addEventListener only). Subscribe to both.
+   */
+  src.addEventListener('invalidate', (ev) => handleInvalidateSSE(ev, 'invalidate'));
+  src.onmessage = (ev) => handleInvalidateSSE(ev, 'message');
+
+  /* Redundant polling keeps the grid responsive if SSE bytes never arrive (JDK HttpExchange thread rules). */
+  pollTableVersion('boot');
+  setInterval(() => pollTableVersion('t'), 1_500);
+
+  window.addEventListener('beforeunload', () => src.close());
+})();
+</script>
+</body>
+</html>
