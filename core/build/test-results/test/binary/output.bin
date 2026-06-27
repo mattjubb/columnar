@@ -1,8 +1,0 @@
-# | id   | symbol | price 
-  | LONG | STRING | DOUBLE
---+------+--------+-------
-0 | 1    | AAPL   | 220.13
-1 | 2    | MSFT   | 410.5 
-2 | 3    | GOOG   | 175.2 
-![3 rows × 3 columns, version=0]
-

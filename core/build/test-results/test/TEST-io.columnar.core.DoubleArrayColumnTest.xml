@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.core.DoubleArrayColumnTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:00.553Z" hostname="Mac.localdomain" time="0.003">
-  <properties/>
-  <testcase name="builderStoresAndReadsFixedDoubleArrays()" classname="io.columnar.core.DoubleArrayColumnTest" time="0.001"/>
-  <testcase name="wrongArrayLengthRejectedOnAppend()" classname="io.columnar.core.DoubleArrayColumnTest" time="0.001"/>
-  <testcase name="hotChunkPacksRowMajor()" classname="io.columnar.core.DoubleArrayColumnTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.core.SchemaTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:00.560Z" hostname="Mac.localdomain" time="0.001">
-  <properties/>
-  <testcase name="buildsAndIndexes()" classname="io.columnar.core.SchemaTest" time="0.0"/>
-  <testcase name="selectReorders()" classname="io.columnar.core.SchemaTest" time="0.0"/>
-  <testcase name="rejectsDuplicateNames()" classname="io.columnar.core.SchemaTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
