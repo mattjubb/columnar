@@ -1,0 +1,8 @@
+description = 'Query layer — dependency graph, dirty tracking, materialization cache, pull executor, tick coordinator.'
+
+dependencies {
+    api project(':core')
+    implementation libs.jctools
+    implementation libs.fastutil
+    implementation libs.slf4jApi
+}

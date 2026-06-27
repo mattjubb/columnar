@@ -1,0 +1,14 @@
+description = 'Operator engine — Filter, Project, Sort, HashAggregate, HashJoin, Pivot; expression interpreter and ByteBuddy codegen; Columnar query facade.'
+
+tasks.withType(Test).configureEach {
+    // Arrow's MemoryUtil requires access to java.nio internals
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED'
+}
+
+dependencies {
+    api project(':api')
+    implementation project(':storage')
+    implementation libs.byteBuddy
+    implementation libs.fastutil
+    implementation libs.slf4jApi
+}

@@ -1,0 +1,19 @@
+plugins {
+    id 'me.champeau.jmh' version '0.7.2'
+}
+
+description = 'JMH benchmarks for operator pipelines and expression codegen paths.'
+
+dependencies {
+    jmh project(':core')
+    jmh project(':query')
+    jmh libs.jmhCore
+    jmhAnnotationProcessor libs.jmhAnnotations
+}
+
+jmh {
+    jvmArgs.set(['--add-modules=jdk.incubator.vector', '--enable-native-access=ALL-UNNAMED'])
+    fork.set(1)
+    warmupIterations.set(3)
+    iterations.set(5)
+}

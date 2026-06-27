@@ -1,0 +1,14 @@
+description = 'Public API — data model types, table implementations, chunk/store layer, and file I/O (CSV, Arrow, Parquet).'
+
+dependencies {
+    api libs.fastutil
+    implementation libs.slf4jApi
+    implementation libs.arrowVector
+    implementation libs.arrowMemoryNetty
+    implementation libs.parquetFloor
+}
+
+tasks.withType(Test).configureEach {
+    // Arrow's MemoryUtil requires access to java.nio internals
+    jvmArgs '--add-opens=java.base/java.nio=ALL-UNNAMED'
+}

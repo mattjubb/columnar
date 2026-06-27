@@ -1,0 +1,23 @@
+description = 'Browser visualization — AG Grid viewer via Server-Sent Events; ServiceLoader TableVisualizer implementation.'
+
+apply plugin: 'application'
+
+dependencies {
+    api project(':core')
+    api project(':query')
+    implementation libs.slf4jSimple
+    implementation libs.vertxWeb
+}
+
+application {
+    mainClass = 'io.columnar.ui.DemoInterestRateDv01Pivot'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // vertx-core embeds codegen metadata that javac's classfile lint cannot interpret
+    options.compilerArgs.add('-Xlint:-classfile')
+}
+
+tasks.named('run').configure {
+    maxHeapSize = '3g'
+}

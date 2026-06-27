@@ -1,0 +1,6 @@
+description = 'Tiered off-heap storage — MemorySegment-backed WARM chunks with LRU eviction.'
+
+dependencies {
+    api project(':api')
+    implementation libs.slf4jApi
+}

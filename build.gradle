@@ -1,0 +1,69 @@
+plugins {
+    id 'base'
+}
+
+description = 'Columnar — high-performance in-memory column-oriented table framework.'
+
+allprojects {
+    group = 'io.columnar'
+    version = '0.1.0-SNAPSHOT'
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 25
+        options.compilerArgs.addAll([
+            '-Xlint:all',
+            '-Xlint:-serial',
+            '-Xlint:-processing',
+            '--add-modules=jdk.incubator.vector',
+        ])
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter', 'jqwik'
+        }
+        maxHeapSize = '4g'
+        jvmArgs(
+            '--add-modules=jdk.incubator.vector',
+            '--enable-native-access=ALL-UNNAMED',
+        )
+        testLogging {
+            events 'passed', 'skipped', 'failed'
+            showStandardStreams = true
+        }
+    }
+
+    tasks.withType(JavaExec).configureEach {
+        jvmArgs(
+            '--add-modules=jdk.incubator.vector',
+            '--enable-native-access=ALL-UNNAMED',
+        )
+    }
+
+    tasks.withType(Javadoc).configureEach {
+        options.addBooleanOption('Xdoclint:none', true)
+    }
+
+    dependencies {
+        testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
+        testImplementation libs.junitJupiter
+        testImplementation libs.jqwik
+        testImplementation libs.assertj
+        testRuntimeOnly libs.junitPlatformLauncher
+    }
+}
