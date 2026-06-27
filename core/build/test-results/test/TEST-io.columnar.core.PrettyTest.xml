@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.core.PrettyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:04:51.802Z" hostname="Mac.localdomain" time="0.03">
+<testsuite name="io.columnar.core.PrettyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:00.556Z" hostname="Mac.localdomain" time="0.003">
   <properties/>
-  <testcase name="truncatesLongTablesWithFooter()" classname="io.columnar.core.PrettyTest" time="0.023"/>
+  <testcase name="truncatesLongTablesWithFooter()" classname="io.columnar.core.PrettyTest" time="0.001"/>
   <testcase name="rendersNullsAsWord()" classname="io.columnar.core.PrettyTest" time="0.001"/>
-  <testcase name="formatsBasicSlice()" classname="io.columnar.core.PrettyTest" time="0.003"/>
+  <testcase name="formatsBasicSlice()" classname="io.columnar.core.PrettyTest" time="0.001"/>
   <testcase name="formatColumnOnly()" classname="io.columnar.core.PrettyTest" time="0.0"/>
   <system-out><![CDATA[# | id   | symbol | price 
   | LONG | STRING | DOUBLE

@@ -2,12 +2,15 @@ package io.columnar.core;
 
 import io.columnar.core.store.BooleanColumnStore;
 import io.columnar.core.store.ColumnStore;
+import io.columnar.core.store.DateArrayColumnStore;
 import io.columnar.core.store.DoubleArrayColumnStore;
 import io.columnar.core.store.DoubleColumnStore;
 import io.columnar.core.store.FloatColumnStore;
 import io.columnar.core.store.InstantColumnStore;
+import io.columnar.core.store.IntArrayColumnStore;
 import io.columnar.core.store.IntColumnStore;
 import io.columnar.core.store.LongColumnStore;
+import io.columnar.core.store.StringArrayColumnStore;
 import io.columnar.core.store.StringColumnStore;
 
 import java.time.Instant;
@@ -75,6 +78,34 @@ public final class RowAppender {
     public RowAppender setDoubleArray(int col, double[] values) {
         mark(col);
         ((DoubleArrayColumnStore) stores.get(col)).appendDoubleArray(values);
+        return this;
+    }
+
+    /** Append a fixed-length {@code int[]} row for a {@link DataType#INT_ARRAY} column. */
+    public RowAppender setIntArray(int col, int[] values) {
+        mark(col);
+        ((IntArrayColumnStore) stores.get(col)).appendIntArray(values);
+        return this;
+    }
+
+    /** Append a fixed-length {@code String[]} row for a {@link DataType#STRING_ARRAY} column. */
+    public RowAppender setStringArray(int col, String[] values) {
+        mark(col);
+        ((StringArrayColumnStore) stores.get(col)).appendStringArray(values);
+        return this;
+    }
+
+    /** Append a fixed-length epoch-nano {@code long[]} row for a {@link DataType#DATE_ARRAY} column. */
+    public RowAppender setDateArray(int col, long[] epochNanos) {
+        mark(col);
+        ((DateArrayColumnStore) stores.get(col)).appendEpochNanoArray(epochNanos);
+        return this;
+    }
+
+    /** Append a fixed-length {@code Instant[]} row for a {@link DataType#DATE_ARRAY} column. */
+    public RowAppender setDateArray(int col, Instant[] values) {
+        mark(col);
+        ((DateArrayColumnStore) stores.get(col)).appendInstantArray(values);
         return this;
     }
 

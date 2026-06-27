@@ -17,17 +17,10 @@ class DoubleArrayColumnTest {
                         .add("curve", DataType.DOUBLE_ARRAY, 3)
                         .build();
 
-        BaseTable t =
-                Table.builder(schema)
-                        .row()
-                        .setLong(0, 1L)
-                        .setDoubleArray(1, new double[] {1.0, 2.0, 3.0})
-                        .commit()
-                        .row()
-                        .setLong(0, 2L)
-                        .setDoubleArray(1, new double[] {-1.0, 0.0, 1.5})
-                        .commit()
-                        .build();
+        BaseTable.Builder b = Table.builder(schema);
+        b.row().setLong(0, 1L).setDoubleArray(1, new double[] {1.0, 2.0, 3.0}).commit();
+        b.row().setLong(0, 2L).setDoubleArray(1, new double[] {-1.0, 0.0, 1.5}).commit();
+        BaseTable t = b.build();
 
         ColumnarSlice slice = t.read();
         assertThat(slice.rowCount()).isEqualTo(2);

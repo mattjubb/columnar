@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.engine.JoinSubscriptionTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.671Z" hostname="Mac.localdomain" time="0.009">
+<testsuite name="io.columnar.engine.JoinSubscriptionTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.793Z" hostname="Mac.localdomain" time="0.007">
   <properties/>
-  <testcase name="subscribeToColumnAndLimitViewportPropagates()" classname="io.columnar.engine.JoinSubscriptionTest" time="0.002"/>
-  <testcase name="liveJoinedToStaticPropagatesAppendsToSubscriber()" classname="io.columnar.engine.JoinSubscriptionTest" time="0.007"/>
+  <testcase name="subscribeToColumnAndLimitViewportPropagates()" classname="io.columnar.engine.JoinSubscriptionTest" time="0.003"/>
+  <testcase name="liveJoinedToStaticPropagatesAppendsToSubscriber()" classname="io.columnar.engine.JoinSubscriptionTest" time="0.004"/>
   <system-out><![CDATA[Final joined slice after 4 appends:
 # | id   | symbol | price  | sector
   | LONG | STRING | DOUBLE | STRING

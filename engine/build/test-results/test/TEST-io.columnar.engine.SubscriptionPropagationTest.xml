@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.engine.SubscriptionPropagationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.822Z" hostname="Mac.localdomain" time="0.003">
+<testsuite name="io.columnar.engine.SubscriptionPropagationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.944Z" hostname="Mac.localdomain" time="0.004">
   <properties/>
-  <testcase name="pivotSubscriptionRecomputesOnAppend()" classname="io.columnar.engine.SubscriptionPropagationTest" time="0.001"/>
+  <testcase name="pivotSubscriptionRecomputesOnAppend()" classname="io.columnar.engine.SubscriptionPropagationTest" time="0.002"/>
   <testcase name="subscriberWithRowRangeViewportSeesOnlyThatWindow()" classname="io.columnar.engine.SubscriptionPropagationTest" time="0.001"/>
   <testcase name="subscriberSeesInitialThenLiveUpdates()" classname="io.columnar.engine.SubscriptionPropagationTest" time="0.001"/>
   <system-out><![CDATA[# | region | cat1   | cat2   | cat3  

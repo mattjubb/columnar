@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.memory.ChunkResidencyManagerEvictionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:04:51.611Z" hostname="Mac.localdomain" time="0.031">
+<testsuite name="io.columnar.memory.ChunkResidencyManagerEvictionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.149Z" hostname="Mac.localdomain" time="0.033">
   <properties/>
-  <testcase name="pinningPreventsColdDemotionImmediately()" classname="io.columnar.memory.ChunkResidencyManagerEvictionTest" time="0.031"/>
+  <testcase name="pinningPreventsColdDemotionImmediately()" classname="io.columnar.memory.ChunkResidencyManagerEvictionTest" time="0.033"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

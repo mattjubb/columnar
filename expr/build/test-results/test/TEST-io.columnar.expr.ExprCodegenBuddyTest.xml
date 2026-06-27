@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.expr.ExprCodegenBuddyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.570Z" hostname="Mac.localdomain" time="0.133">
+<testsuite name="io.columnar.expr.ExprCodegenBuddyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.475Z" hostname="Mac.localdomain" time="0.154">
   <properties/>
-  <testcase name="doubleGtBuddySubclassIsMarked()" classname="io.columnar.expr.ExprCodegenBuddyTest" time="0.133"/>
+  <testcase name="doubleGtBuddySubclassIsMarked()" classname="io.columnar.expr.ExprCodegenBuddyTest" time="0.154"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -24,14 +24,18 @@ public final class Schema {
             if (name.isEmpty()) {
                 throw new IllegalArgumentException("field name must not be empty");
             }
-            if (type == DataType.DOUBLE_ARRAY) {
+            boolean isArrayType = type == DataType.DOUBLE_ARRAY
+                    || type == DataType.INT_ARRAY
+                    || type == DataType.STRING_ARRAY
+                    || type == DataType.DATE_ARRAY;
+            if (isArrayType) {
                 if (arrayLength <= 0) {
                     throw new IllegalArgumentException(
-                            "DOUBLE_ARRAY field " + name + " requires arrayLength > 0");
+                            type + " field " + name + " requires arrayLength > 0");
                 }
             } else if (arrayLength != 0) {
                 throw new IllegalArgumentException(
-                        "arrayLength applies only to DOUBLE_ARRAY, got " + type + " for " + name);
+                        "arrayLength applies only to array types, got " + type + " for " + name);
             }
         }
     }
@@ -139,9 +143,7 @@ public final class Schema {
             return this;
         }
 
-        /**
-         * Add a fixed-length primitive array column (currently {@link DataType#DOUBLE_ARRAY} only).
-         */
+        /** Add a fixed-length array column ({@link DataType#DOUBLE_ARRAY}, {@link DataType#INT_ARRAY}, {@link DataType#STRING_ARRAY}, {@link DataType#DATE_ARRAY}). */
         public Builder add(String name, DataType type, int arrayLength) {
             fields.add(new Field(name, type, arrayLength));
             return this;

@@ -9,6 +9,8 @@ jqwik = "1.9.1"
 jmh = "1.37"
 slf4j = "2.0.16"
 vertx = "5.0.12"
+arrow = "17.0.0"
+parquetFloor = "1.51"
 
 [libraries]
 byteBuddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
@@ -17,6 +19,9 @@ jctools = { module = "org.jctools:jctools-core", version.ref = "jctools" }
 slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 vertxWeb = { module = "io.vertx:vertx-web", version.ref = "vertx" }
+arrowVector = { module = "org.apache.arrow:arrow-vector", version.ref = "arrow" }
+arrowMemoryNetty = { module = "org.apache.arrow:arrow-memory-netty", version.ref = "arrow" }
+parquetFloor = { module = "blue.strategic.parquet:parquet-floor", version.ref = "parquetFloor" }
 
 junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }

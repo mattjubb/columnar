@@ -10,4 +10,7 @@ dependencies {
     api(project(":engine"))
     implementation(project(":expr"))
     implementation(libs.slf4jApi)
+    implementation(libs.arrowVector)
+    implementation(libs.arrowMemoryNetty)
+    implementation(libs.parquetFloor)
 }

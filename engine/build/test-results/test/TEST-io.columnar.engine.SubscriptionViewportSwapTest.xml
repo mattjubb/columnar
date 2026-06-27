@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.engine.SubscriptionViewportSwapTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.825Z" hostname="Mac.localdomain" time="0.005">
+<testsuite name="io.columnar.engine.SubscriptionViewportSwapTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.948Z" hostname="Mac.localdomain" time="0.005">
   <properties/>
   <testcase name="updateViewportOnBaseTableSubscriptionRefreshesImmediately()" classname="io.columnar.engine.SubscriptionViewportSwapTest" time="0.001"/>
   <testcase name="updateViewportOnDerivedTableSubscriptionRefreshesImmediately()" classname="io.columnar.engine.SubscriptionViewportSwapTest" time="0.003"/>

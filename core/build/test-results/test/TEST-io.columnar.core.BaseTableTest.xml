@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.core.BaseTableTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:04:51.579Z" hostname="Mac.localdomain" time="0.222">
+<testsuite name="io.columnar.core.BaseTableTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:00.499Z" hostname="Mac.localdomain" time="0.053">
   <properties/>
-  <testcase name="listenersFireOnEachAppend()" classname="io.columnar.core.BaseTableTest" time="0.078"/>
-  <testcase name="sealStopsVersionFromAdvancing()" classname="io.columnar.core.BaseTableTest" time="0.011"/>
-  <testcase name="limitCapsRows()" classname="io.columnar.core.BaseTableTest" time="0.017"/>
-  <testcase name="appendsBumpVersion()" classname="io.columnar.core.BaseTableTest" time="0.001"/>
+  <testcase name="listenersFireOnEachAppend()" classname="io.columnar.core.BaseTableTest" time="0.034"/>
+  <testcase name="sealStopsVersionFromAdvancing()" classname="io.columnar.core.BaseTableTest" time="0.005"/>
+  <testcase name="limitCapsRows()" classname="io.columnar.core.BaseTableTest" time="0.006"/>
+  <testcase name="appendsBumpVersion()" classname="io.columnar.core.BaseTableTest" time="0.0"/>
   <testcase name="readReflectsCurrentSnapshot()" classname="io.columnar.core.BaseTableTest" time="0.0"/>
-  <testcase name="sealedTableReadAllReturnsEverything()" classname="io.columnar.core.BaseTableTest" time="0.002"/>
+  <testcase name="sealedTableReadAllReturnsEverything()" classname="io.columnar.core.BaseTableTest" time="0.001"/>
   <testcase name="appendingToSealedTableThrows()" classname="io.columnar.core.BaseTableTest" time="0.0"/>
-  <testcase name="columnSubsetViewportProjects()" classname="io.columnar.core.BaseTableTest" time="0.076"/>
+  <testcase name="columnSubsetViewportProjects()" classname="io.columnar.core.BaseTableTest" time="0.002"/>
   <testcase name="rowRangeViewportSlices()" classname="io.columnar.core.BaseTableTest" time="0.001"/>
   <testcase name="snapshotsAreImmutableAcrossAppends()" classname="io.columnar.core.BaseTableTest" time="0.0"/>
-  <testcase name="unsetColumnsBecomeNull()" classname="io.columnar.core.BaseTableTest" time="0.033"/>
-  <testcase name="typedRowAppender()" classname="io.columnar.core.BaseTableTest" time="0.001"/>
+  <testcase name="unsetColumnsBecomeNull()" classname="io.columnar.core.BaseTableTest" time="0.001"/>
+  <testcase name="typedRowAppender()" classname="io.columnar.core.BaseTableTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

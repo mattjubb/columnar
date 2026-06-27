@@ -1,12 +1,15 @@
 package io.columnar.core;
 
 import io.columnar.core.chunk.BooleanChunk;
+import io.columnar.core.chunk.DateArrayChunk;
 import io.columnar.core.chunk.DoubleArrayChunk;
 import io.columnar.core.chunk.DoubleChunk;
 import io.columnar.core.chunk.FloatChunk;
 import io.columnar.core.chunk.InstantChunk;
+import io.columnar.core.chunk.IntArrayChunk;
 import io.columnar.core.chunk.IntChunk;
 import io.columnar.core.chunk.LongChunk;
+import io.columnar.core.chunk.StringArrayChunk;
 import io.columnar.core.chunk.StringChunk;
 
 import java.io.PrintStream;
@@ -223,10 +226,45 @@ public final class Pretty {
         StringBuilder sb = new StringBuilder(n * 8 + 2);
         sb.append('[');
         for (int e = 0; e < n; e++) {
-            if (e > 0) {
-                sb.append(',');
-            }
+            if (e > 0) sb.append(',');
             sb.append(chunk.getDouble(row, e));
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    private static String formatIntArrayRow(IntArrayChunk chunk, int row) {
+        int n = chunk.elementsPerRow();
+        StringBuilder sb = new StringBuilder(n * 4 + 2);
+        sb.append('[');
+        for (int e = 0; e < n; e++) {
+            if (e > 0) sb.append(',');
+            sb.append(chunk.getInt(row, e));
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    private static String formatStringArrayRow(StringArrayChunk chunk, int row) {
+        int n = chunk.elementsPerRow();
+        StringBuilder sb = new StringBuilder(n * 8 + 2);
+        sb.append('[');
+        for (int e = 0; e < n; e++) {
+            if (e > 0) sb.append(',');
+            String v = chunk.getString(row, e);
+            sb.append(v == null ? NULL_REPR : v);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
+    private static String formatDateArrayRow(DateArrayChunk chunk, int row) {
+        int n = chunk.elementsPerRow();
+        StringBuilder sb = new StringBuilder(n * 30 + 2);
+        sb.append('[');
+        for (int e = 0; e < n; e++) {
+            if (e > 0) sb.append(',');
+            sb.append(chunk.getInstant(row, e));
         }
         sb.append(']');
         return sb.toString();
@@ -253,6 +291,9 @@ public final class Pretty {
                 yield v == null ? NULL_REPR : v;
             }
             case DoubleArrayChunk dac -> formatDoubleArrayRow(dac, row);
+            case IntArrayChunk iac -> formatIntArrayRow(iac, row);
+            case StringArrayChunk sac -> formatStringArrayRow(sac, row);
+            case DateArrayChunk dac -> formatDateArrayRow(dac, row);
             default -> "<" + chunk.getClass().getSimpleName() + ">";
         };
         return truncate(s, maxWidth);

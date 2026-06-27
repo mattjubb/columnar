@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.columnar.engine.LargePivotTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-05-16T05:06:55.682Z" hostname="Mac.localdomain" time="0.135">
+<testsuite name="io.columnar.engine.LargePivotTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-27T00:36:57.801Z" hostname="Mac.localdomain" time="0.139">
   <properties/>
-  <testcase name="pivotViewportProjectsToSubsetOfPivotColumns()" classname="io.columnar.engine.LargePivotTest" time="0.004"/>
-  <testcase name="onMillionRowsAcrossTwentyPivotKeys()" classname="io.columnar.engine.LargePivotTest" time="0.131"/>
-  <system-out><![CDATA[LargePivotTest: build 1000000 rows took 106ms; pivot cold 21ms, warm 0ms
+  <testcase name="pivotViewportProjectsToSubsetOfPivotColumns()" classname="io.columnar.engine.LargePivotTest" time="0.003"/>
+  <testcase name="onMillionRowsAcrossTwentyPivotKeys()" classname="io.columnar.engine.LargePivotTest" time="0.136"/>
+  <system-out><![CDATA[LargePivotTest: build 1000000 rows took 110ms; pivot cold 22ms, warm 0ms
 # | region | cat0              | cat1              | cat2              | cat3               | cat4              | cat5              | cat6              | cat7              | cat8              | ...
   | STRING | DOUBLE            | DOUBLE            | DOUBLE            | DOUBLE             | DOUBLE            | DOUBLE            | DOUBLE            | DOUBLE            | DOUBLE            | ...
 --+--------+-------------------+-------------------+-------------------+--------------------+-------------------+-------------------+-------------------+-------------------+-------------------+----
